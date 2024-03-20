@@ -17,21 +17,20 @@ export class AuthService {
     ) {}
 
     async validateUser(data: AuthPayloadDto) {
-
-        const participant = await this.participantRepository.findOneBy({ name: data.name })
-
+        const participant = await this.participantRepository.findOneBy({ email: data.email });
+    
         if (!participant) {
-             throw new NotFoundException('User not found');
+            throw new NotFoundException('User not found');
         }
-
+    
         const isValidPassword = data.password === participant.password;
         if (!isValidPassword) {
             throw new BadRequestException('Invalid credentials');
         }
-
-            // Omettre le champ password avant de générer le token JWT 
-            const { password, ...user } = participant;
-            return this.jwtService.sign(user);
-        
+    
+        // Omettre le champ password avant de générer le token JWT 
+        const { password, ...user } = participant;
+        return this.jwtService.sign(user);
     }
+    
 }
